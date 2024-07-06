@@ -1,9 +1,12 @@
+import XLSX from "xlsx";
+
 const csv_selector = document.querySelector(
   "#csv_selector"
 ) as HTMLInputElement;
 const csv_table = document.querySelector("#csv_table") as HTMLTableElement;
-if (!csv_selector || !csv_table) {
-  throw new Error("csv_selector or csv_table not found");
+const xlsx_button = document.querySelector("#xlsx_button") as HTMLButtonElement;
+if (!csv_selector || !csv_table || !xlsx_button) {
+  throw new Error("csv_selector or csv_table or xlsx_button not found");
 }
 
 let csv: string[][];
@@ -28,4 +31,16 @@ csv_selector.addEventListener("change", (event: Event) => {
         .join("");
     };
   }
+});
+
+xlsx_button.addEventListener("click", (event) => {
+  event.stopPropagation();
+  event.preventDefault();
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(
+    workbook,
+    XLSX.utils.table_to_sheet(csv_table),
+    "Sheet1"
+  );
+  XLSX.writeFile(workbook, "test.xlsx");
 });
